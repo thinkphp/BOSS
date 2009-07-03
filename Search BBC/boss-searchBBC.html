@@ -1,0 +1,248 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>BBC search with BOSS - Build your own search service</title>
+  <link rel="stylesheet" href="http://yui.yahooapis.com/2.5.1/build/reset-fonts-grids/reset-fonts-grids.css" type="text/css">
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+  <style>
+
+    html,body{
+
+      background:#369;
+      color:#000;
+      font-family:"Lucida Grande",Helvetica,Arial,Sans-serif;
+      
+    }
+
+    form{
+
+      background:#036;
+      border-radius:5px;
+      -moz-border-radius:5px;
+      -webkit-border-radius:5px;
+      padding:1em;
+      color:#fff;
+      font-size:120%;
+      overflow:hidden;
+    }
+ 
+   input{
+
+       margin:0 .5em;
+    }
+
+
+   #doc{
+
+       background:#fff;
+       border:1em solid #fff;
+    }
+
+   li{
+
+       padding:.5em 0;
+    }
+
+    li a {
+
+      display:block;
+      color:#ffc;
+      font-size:120%;
+      padding-bottom:.2em;
+
+    }
+
+
+  h1{
+      font-size:250%;
+      margin:.5em 0;
+      color:#036;
+      font-family:"futura","Gill Sans",Arial,sans-serif;
+      text-align:center;
+    }
+
+  #ft{
+
+      margin-top:2em;
+      color:#666;
+      font-size:90%;
+    }
+
+    #ft a{
+      color:#000;
+    }
+
+
+  </style>
+</head>
+<body>
+
+<div id="doc" class="yui-t7">
+
+  <div id="hd"><h1>Progressively enhancing a search form - bbc.co.uk</h1></div>
+
+     <div id="bd">
+
+           <form id="customsearch" action="http://search.yahoo.com/search">
+
+             <div>
+                <label for="p">Search this site: </label> 
+                <input type="text" name="p" id="term" />
+                <input type="hidden" name="vs" id="site" value="bbc.co.uk" />
+                <input type="submit" value="go" />
+             </div>
+ 
+           </form>
+
+     </div><!--end bd -->
+
+<div id="ft"><p>Written by <a href="http://thinkphp.ro">Adrian Statescu</a>, powered by <a href="http://thinkphp.ro/apps/BOSS">BOSS</a> and <a href="http://thinkphp.ro/BOSS">YUI</a></p><p>This is not an official Yahoo! site and not endorsed by the company.</p></div>
+   
+</div><!-- end doc -->
+
+  <script type="text/javascript">
+
+  SITESEARCH = function() {
+
+      config = {
+
+            IDs: {
+
+                 searchForm: 'customsearch',
+
+                 term: 'term',
+
+                 site: 'site'                
+            },
+
+            loading: 'Loading...',
+
+            noresults: 'No results found.',
+
+            appID: 'YOUR-APP-ID',
+
+            results: 20       
+      };
+
+      var form;
+
+      var out; 
+
+      function init() {
+
+          form = document.getElementById(config.IDs.searchForm);
+
+          if(config.appID == 'YOUR-APP-ID') {
+
+                    alert('Please get a real ID Application!');
+          } else {
+
+          if(form) {
+
+                 form.onsubmit = function() {
+
+                       var site = document.getElementById(config.IDs.site).value;
+
+                       var term = document.getElementById(config.IDs.term).value;
+
+                       if(typeof site == 'string' && typeof term == 'string') {
+
+                           if(typeof out !== 'undefined') {
+
+                                   out.parentNode.removeChild(out);
+                           }
+
+                           out = document.createElement('p');
+
+                           out.appendChild(document.createTextNode(config.loading));
+
+                           form.appendChild(out);
+
+                           var APIurl = 'http://boss.yahooapis.com/ysearch/web/v1/' + term + '?callback=SITESEARCH.found&sites=' + site + '&count=' + config.results + '&appid=' + config.appID;
+
+                           var s = document.createElement('script');
+
+                               s.setAttribute('src',APIurl);
+
+                               s.setAttribute('type','text/javascript');
+
+                               document.getElementsByTagName('head')[0].appendChild(s);
+
+                               return false; 
+
+                       }//end-if
+
+               }//end handler submit
+
+          } //end if form
+
+          }//end else
+
+
+      };
+
+      function found(o) {
+
+               var list = document.createElement('ul');
+
+               var results = o.ysearchresponse.resultset_web;
+
+                   if(results) {
+
+                             var item,link,description;
+
+                             for(var i=0,j=results.length;i<j;i++) { 
+
+                                     item = document.createElement('li');
+
+                                     link = document.createElement('a');
+
+                                     link.setAttribute('href',results[i].clickurl);
+
+                                     link.innerHTML = results[i].title;
+
+                                     item.appendChild(link);
+
+                                     description = document.createElement('p'); 
+
+                                     description.innerHTML = results[i]['abstract'];
+
+                                     item.appendChild(description);
+
+                                     list.appendChild(item); 
+                             }
+
+                             } else {
+
+                                     list = document.createElement('p');
+
+                                     list.appendChild(document.createTextNode(config.noresults));
+
+                             }
+
+                             form.replaceChild(list,out);
+
+                             out = list;            
+     
+      };
+
+             
+       return {
+
+                config: config,
+  
+                init: init,
+
+                found: found
+
+              }
+  }();
+
+  SITESEARCH.config.appID = 'Kzv_lcHV34HIybw0GjVkQNnw4AEXeyJ9Rb1gCZSGxSRNrcif_HdMT9qTE1y9LdI-';
+
+  SITESEARCH.init()
+
+  </script>
+
+</body>
+</html>

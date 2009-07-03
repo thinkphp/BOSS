@@ -1,0 +1,104 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd"> 
+<html> 
+  <head> 
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Find Keywords connected to a certain term</title> 
+    <link rel="stylesheet" href="http://yui.yahooapis.com/2.7.0/build/reset-fonts-grids/reset-fonts-grids.css" type="text/css"> 
+  <style>
+  html,body{background: #ccc;}
+
+  #doc{background: #fff;border: 1em solid #fff}
+
+  ul li {display: inline;padding: 4px;color: #393}
+
+  h2{font-family: tahoma;font-size: 30px;color: #393}  
+
+  #form {margin: 40px;background: #393;color: #fff;padding: 10px;font-weight: bold;font-size:20px;border-radius: 10px;-moz-border-radius:10px;-webkit-border-radius: 10px}
+
+  #ft {margin-top: 20px;font-size: 11px;}
+ 
+  #ft a{color: #ccc}
+
+  </style>
+     </head> 
+
+	<body> 
+
+	<div id="doc" class="yui-t7"> 
+
+	   <div id="hd" role="banner"><h2>Find keywords connected to a certain term with BOSS</h2></div> 
+
+	   <div id="bd" role="main"> 
+
+	    <div class="yui-g"> 
+
+                <div id="form">
+
+                    <label for="term">term: </label><input type="text" name="term" id="term" /><input type="button" id="search" name="search" value="search keywords">
+
+                </div>
+
+                    <div id="results"></results>
+
+	    </div><!-- end yui-g --> 
+	 
+	    </div><!-- end body --> 
+
+	   <div id="ft" role="contentinfo"><p>Written by <a href="http://thinkphp.ro">Adrian Statescu</a> using YUI and BOSS</p></div> 
+
+	</div><!-- end doc -->
+
+  <script type="text/javascript">
+
+       var cb;
+
+       var bossterm = function(){
+
+               function get(term,callback) {
+
+                    var url = 'bossterms.php?term='+ encodeURIComponent(term) + '&callback=bossterm.seed';   
+
+                        cb = callback;
+
+                        getJSON(url);
+               }
+
+               function getJSON(url) {
+
+                        var script = document.createElement('script');
+
+                            script.setAttribute('type','text/javascript');
+
+                            script.setAttribute('src',url);
+
+                            document.getElementsByTagName('head')[0].appendChild(script);  
+               }
+
+              function seed(o) {
+
+                        cb(o);
+              }
+
+            return {get: get,seed: seed}
+       }();
+
+    document.getElementById('search').onclick = function() {
+
+       var term = document.getElementById('term').value; 
+
+           if(term == '') {return;} 
+
+       bossterm.get(term,received);
+
+       function received(o) {
+
+           document.getElementById('results').innerHTML = 'Keywords for <b>' + o.term + '</b>' + o.html;
+       }
+
+    }
+
+  </script>
+
+</body> 
+</html>
+

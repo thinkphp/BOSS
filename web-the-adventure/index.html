@@ -1,0 +1,632 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Web The Adventure</title>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+  <style>
+
+    html,body { background:#000; color:#0c0;font-family:Monaco,Monospace;}
+
+    #display {height: 420px;width: 800px;border: 1px solid #0c0; font-family: Monaco, Monospace;overflow: hidden;padding: 10px} 
+
+    #display p a {color: #0f0;}
+
+    #display p {padding:0 0 .2em 0; margin: 0;}
+
+    #display p strong {color: #0f0;}
+
+    #display p span {font-size: 90%}
+
+    #command {height: 1.2em;width: 800px;margin: 1em 0;border: 1px solid #0c0;font-size: 2em;background: #000;color: #0c0;padding: 10px;}
+
+    #s {visibility: hidden}
+
+    .keywords li{display: inline;padding: 5px;color: #83C490;font-family: monospace;font-size: 15px}
+
+    img {border: 0;margin:2px;border: 1px solid #fff}  
+
+  </style>
+</head>
+<body>
+
+   <div id="display"></div>
+
+   <form id="f">
+       <input type="text" id="command" value="[me@thinkphp me]$ "> 
+       <input type="submit" id="s" name="s" value="do it"/>
+   </form>
+
+  <script type="text/javascript">
+
+        //show me love to the Module Pattern
+        var playboss = function() {
+
+            var config = {
+
+                     appID: 'KCUeUFPIkY2xWi4o038qZr6CXUkuhsaI'
+            };
+
+            var buffer = [];
+
+            var inventory = [];
+
+            var commands= [{c:'<strong>man</strong>',i:'Lists all commands.'},
+                          {c:'<strong>read</strong> <em>topic</em>',i:'Find you news to read.'},
+                          {c:'<strong>find</strong> <em>topic</em>',i:'Find things in the web.'},
+                          {c:'<strong>look</strong> <em>topic</em>',i:'Show you pretty things to look at.'},
+                          {c:'<strong>follow</strong> <em>number</em>',i:'Follow the link to the thing number.'},
+                          {c:'<strong>pick up</strong> <em>number</em>',i:'Put result <em>number</em> in your cart.'},
+                          {c:'<strong>drop</strong> <em>number</em>',i:'Removes <em>number</em> from your cart.'},
+                          {c:'<strong>go</strong> <em>number</em>',i:'Link to <em>number</em> from your cart.'},
+                          {c:'<strong>cat</strong>',i:'Display all things you pick up.'},
+                          {c:'<strong>ls</strong>',i:'Lists all things from buffer.'},
+                          {c:'<strong>k</strong> <em>term</em>',i:'Display keywords connected to a certain term.'},
+                          {c:'<strong>cls</strong>',i:'Clears the screen.'}]; 
+
+           var $ = function(id){return document.getElementById(id);}
+
+           var all = commands.length;
+
+           var disp = $('display');
+
+           var form = $('f');
+
+           var cmd = $('command');
+
+               cmd.setAttribute("autocomplete","off"); 
+
+               form.onsubmit = function() {
+
+                   println('<p>' + cmd.value + '</p>');
+
+                   doit(cmd.value);
+
+                   return false;
+
+               }//end handler onsubmit 
+
+           println('<p>Welcome to web - the adventure</p>');
+           println('<p>------------------------------</p>');
+           println('<p>You are in a vast web.</p>');
+           println('<p>In all directions is a lot of information for you to explore.</p>');
+           println('<p>What do you want to do? (enter "man" for available commands)</p>');
+
+           cmd.focus();
+
+           function doit(command) {
+
+                    var pattern = /^[a-z|A-Z|0-9|_|-]*$/;
+
+                    var command = command.split(" ");
+
+                        switch(command[2]) {
+
+                               //lists all things
+                               case 'man': 
+
+                               for(var i=0;i<all;i++) {
+
+                                      println('<p>' + commands[i].c + ' - ' + commands[i].i + '</p>');
+                               }
+                               break;
+
+                               //clears the screan
+                               case 'cls': 
+
+                               disp.innerHTML = '';            
+                               break;
+
+                               //read news
+                               case 'read':
+
+                               if(pattern.test(command[3]) && typeof command[3] !== 'undefined') {
+
+                                          var n = parseInt(command.length);
+
+                                          var search = '';
+
+                                              for(var i=3; i<= n-1; i++) {
+
+                                                       search += command[i] + ' '; 
+                                              }                                                                                          
+
+                                          println('<p>Trying to find <em>"'+ search +'"<em>...</p>');
+
+                                          search = encodeURIComponent(search); 
+
+                                          leach(search,'news');
+
+                               } else {
+
+                                      println('<p>The sintax of the command is incorrect. <br/>read <em>topic</em></p>');
+                               }
+
+                               break;  
+
+                               //find articles on the web
+                               case 'find':
+
+                               if(pattern.test(command[3]) && typeof command[3] !== 'undefined') {
+
+                                          var n = parseInt(command.length);
+
+                                          var search = '';
+
+                                              for(var i=3; i<= n-1; i++) {
+
+                                                       search += command[i] + ' '; 
+                                              }                                                                                          
+
+                                          println('<p>Trying to find <em>"'+ search +'"<em>...</p>');
+
+                                          search = encodeURIComponent(search);
+
+                                          leach(search,'web');
+                               } else {
+
+                                      println('<p>The sintax of the command is incorrect. <br/>find <em>topic</em></p>');
+                               }
+
+
+                               break;
+ 
+                               //go to the link of the article
+                               case 'follow': 
+
+                               var nr = buffer.length;
+
+                               if(/^[0-9]*$/.test(command[3])) {
+
+                               if(parseInt(command[3]) >= 1 && parseInt(command[3]) <= nr) {
+
+                                          var url = buffer[command[3]-1].match(/href="([^"]+)"/);
+   
+                                              window.open(url[1],'_blank');
+
+                                              //window.location = url[1];
+                               } else {
+
+                                              println('<p>Provides a valid number article.</p>');
+
+                               }//end if-else
+
+                               } else { println('<p>The sintax of the command is incorrect. <br/>follow <em>number</em> (n = 1 to '+ nr +') </p>');}
+
+
+
+
+                               break;
+ 
+                               //pick up an article
+
+                               case 'pick': 
+
+                                  if(command[3] === 'up') { 
+
+                                            if(inventory.length === 5) {
+
+                                                       println('<p>Desole, but you got 5 items in your cart. Remove some first</p>');
+                                            } else {
+
+                                               if(/^[0-9]*$/.test(command[4])) {
+
+                                                   if(parseInt(command[4]) <=5 && parseInt(command[4]) >= 1) { 
+
+                                                              inventory.push(buffer[command[4]-1]);
+
+                                                               println('<p> Added article '+ command[4] + ' to the cart.</p>');
+                                                   } else {
+
+                                                               println('<p> Give a number 0 < n < 6 </p>');
+                                                   }
+
+                                                } else { println('<p> The sintax of the command is incorrent.<br/>pick up n where 0 < n < 6 </p>'); }
+
+                                            }                                      
+                                  } else {
+
+                                                   println('<p> Invalid command.</p>');
+                                  }
+                                 
+                               break;  
+
+                               case 'cat': 
+
+                                     if(typeof command[2] === 'string') {
+
+                                            //if the cart is not empty
+                                           if(inventory.length > 0) {  
+
+                                               for(var i=0; i<inventory.length; i++) {
+
+                                                       println('<p><em>'+ (i+1) + '</em>: ' +inventory[i].replace(/<strong>\d<\/strong>:? ?-? ?/,'').replace(/<p>|<\/p>/,"")+'</p>');
+
+                                               }//end for
+
+                                             //otherwise cart is empty
+                                            } else {
+
+                                                       println('<p>The cart is empty.</p>');
+                                            }
+                                     }
+
+                               break;
+
+
+                               case 'drop': 
+
+                               var n = inventory.length;
+
+                               if(/^[0-9]*$/.test(command[3])) {
+
+                                     if(parseInt(command[3]) < 6 && inventory[command[3]-1]) {
+
+                                            inventory.splice((parseInt(command[3])-1),1);
+
+                                            println('<p>Drop article '+ command[3] +' from your cart!</p>');
+
+                                            for(var i=0; i < inventory.length; i++) {
+
+                                                       println('<p><em>'+ (i+1) + '</em>: ' +inventory[i].replace(/<strong>\d<\/strong>:? ?-? ?/,'').replace(/<p>|<\/p>/,"")+'</p>');                                                               
+
+                                            }//end-for
+                 
+                                      } else {
+
+                                            println('<p>Article '+ command[3] +' doesn`t exist in your cart!</p>');
+
+                                      }//end if-else
+
+                               } else {println('<p>The sintax of the command is incorrect. <br/> drop n where n = 1 to '+ n +'</p>');}
+
+                               break;
+
+
+
+                               case 'ls': 
+
+                                     if(typeof command[2] === 'string') {
+
+                                            //if the buffer is not empty
+                                           if(buffer.length > 0) {  
+
+                                               for(var i=0; i<buffer.length; i++) {
+
+                                                    //if contain any tag img then don t apply <p>
+                                                    if(buffer[i].indexOf('img') !== -1) {  
+
+                                                       println(buffer[i]);
+
+                                                    } else {
+
+                                                       println('<p>' + buffer[i] + '</p>'); }
+
+                                               }//end for
+
+                                             //otherwise the buffer is empty
+                                            } else {
+
+                                                       println('<p>The buffer is empty.</p>');
+                                            }
+                                     }
+
+                               break;
+
+
+
+                               //go to the link of the article
+                               case 'go': 
+
+                               var n = inventory.length;
+
+                               if(/^[0-9]*$/.test(command[3])) {
+
+                               if(parseInt(command[3]) >=1 && parseInt(command[3])<=n) {
+
+                                          var url = inventory[command[3]-1].match(/href="([^"]+)"/);
+
+                                                       println('<p>Execute.</p>');
+
+                                           window.open(url[1],'_blank');
+
+                               } else {
+
+                                                       println('<p>No articles.( Try 1 - '+ n +' )</p>');
+                               }//end if-else
+
+                               } else { println('<p>The sintax of the command is incorrect. view number (n: 1 - '+ n +') </p>');}
+
+                               break;
+
+                               case 'look': 
+
+                                     if(pattern.test(command[3]) && typeof command[3] !== 'undefined') {
+          
+                                          var n = parseInt(command.length);
+
+                                          var search = '';
+
+                                              for(var i=3; i<= n-1; i++) {
+
+                                                       search += command[i] + ' '; 
+                                              }                                                                                          
+
+                                          println('<p>Trying to find <em>"'+ search +'"<em>...</p>');
+
+                                          search = encodeURIComponent(search); 
+
+                                          leach(search,'images');
+
+                                     } else {
+
+                                          println('<p>The sintax of the command is incorrect. <br/>look <em>topic</em></p>');
+
+                                     }
+
+                               break;
+
+                               case 'k': 
+
+                                     if(pattern.test(command[3]) && command[3] !== '' && typeof command[3] !== 'undefined') {
+
+                                          println('<p>Trying to find keywords for '+ command[3] +'...</p>');
+
+                                          var search = command[3];
+
+                                          playboss.get(search, function(output) {println('<p>'+ output +'</p>'); });
+
+                                     } else {
+
+                                          println('<p>The sintax of the command is incorrect. <br/>keywords <em>term</em></p>');
+
+                                     }
+
+
+                               break; 
+
+                               //otherwise is recognized
+                               default: 
+                               println('<p>is not recognized as an internal or external command.</p>');
+
+                        }//end-switch  
+
+                        cmd.value = '[me@thinkphp me]$ '; 
+
+           }//end function
+
+
+
+           function fix() {
+
+                 var disp = $('display');
+
+                     disp.scrollTop = disp.scrollHeight - 400; 
+           } 
+
+
+
+           function println(message) {
+
+                    disp.innerHTML += '' + message +'';
+
+                    setTimeout("playboss.fix()",10);
+ 
+           } //end function
+
+
+           function leach(search,type,url) { 
+
+                   var olds = $('leachnow');
+
+                       if(olds) { 
+     
+                              olds.parentNode.removeChild(olds);
+                       } 
+
+                   var url = 'http://boss.yahooapis.com/ysearch/'+type+ '/v1/'+search+'?format=json&appid=' +config.appID + '&callback=playboss.seed&count=5';
+
+                   var script = document.createElement('script');
+
+                       script.setAttribute('type','text/javascript');
+
+                       script.setAttribute('src',url);
+
+                       script.setAttribute('id','leachnow');
+
+                       document.getElementsByTagName('head')[0].appendChild(script);
+
+           }//end function
+
+
+
+           function seed(json) {
+
+                    buffer = []; 
+
+                    if(typeof json.ysearchresponse.resultset_web === 'object') {
+
+                              println('<p>Found this things: </p>'); 
+
+                              var results = json.ysearchresponse.resultset_web;
+
+                              var all = results.length;
+
+                                        for(var i=0; i<all; i++) {
+
+                                                 var out = '<strong>'+ (i+1) +'</strong>: - <a href="'+ results[i].clickurl +'">'+ results[i].title +'</a> <span>'+ results[i].abstract +'</span>';
+
+                                                 buffer.push('<p>' + out + '</p>');
+
+                                                 println('<p>' + out + '</p>'); 
+   
+                                        }//end-for
+                    } //end if
+
+
+                    if(typeof json.ysearchresponse.resultset_news === 'object') {
+
+                              println('<p>Found this things: </p>'); 
+
+                              var results = json.ysearchresponse.resultset_news;
+
+                              var all = results.length;
+
+                                        for(var i=0; i<all; i++) {
+
+                                                 var out = '<strong>'+ (i+1) +'</strong>: - <a href="'+ results[i].clickurl +'">'+ results[i].title +'</a> <span>'+ results[i].abstract +'</span>';
+
+                                                 buffer.push('<p>' + out + '</p>');
+
+                                                 println('<p>' + out + '</p>'); 
+   
+                                        }//end-for a
+                    } //end if
+
+
+
+                    if(typeof json.ysearchresponse.resultset_images === 'object') {
+
+                              println('<p>Found this things: </p>'); 
+
+                              var results = json.ysearchresponse.resultset_images;
+
+                              var all = results.length;
+
+                              var out_start = '<p>';
+
+                              var output = ''; 
+
+                                        for(var i=0; i < all; i++) {
+
+                                                 output = '<strong>'+(i+1)+'</strong> <a href="'+results[i].refererclickurl+'"><img src="'+results[i].thumbnail_url+'"></a>';
+
+                                                 buffer.push(output);
+   
+                                        }//end-for 
+
+                              var out_end='</p>';
+
+                                 println(out_start + buffer.join("") + out_end);
+                    } //end if
+
+
+
+                    if(typeof json.ysearchresponse.resultset_news !== 'object' 
+
+                                   && typeof json.ysearchresponse.resultset_web !== 'object' 
+
+                                          && typeof json.ysearchresponse.resultset_images !== 'object') {
+
+                              println('<p>No founds articles for this search. </p>'); 
+                    }
+
+
+             $('command').focus();
+                  
+           } //end function seed
+
+
+
+
+
+           var cb;  
+
+           var filteredterms = [];
+
+           var query;
+
+           var out = {}; 
+
+           function getTerms(search,callback) {
+
+                    if(typeof callback === 'function') {
+
+                              cb = callback; 
+                    }
+
+                    query = search;
+
+                    getJSON(search);
+           }
+
+           function getJSON(term) {
+
+                 var old = $('seedterm');
+
+                     if(old) {old.parentNode.removeChild(old);}
+
+                 var api = 'http://boss.yahooapis.com/ysearch/web/v1/' + term + '?format=json&view=keyterms&callback=playboss.seedTerms&appid=' + config.appID;
+
+                 var script = document.createElement('script');
+ 
+                     script.setAttribute('type','text/javascript');
+
+                     script.setAttribute('src',api);
+
+                     script.setAttribute('id','seedterm');
+
+                     document.getElementsByTagName('head')[0].appendChild(script);
+           }  
+
+           function seedTerms(json) {
+
+                 var results = json.ysearchresponse.resultset_web;
+
+                     if(typeof json.ysearchresponse.resultset_web !== 'undefined') { 
+
+                        println('<p>Found this things: </p>'); 
+
+                        filteredterms = [];
+
+                        for(var i=0; i < 3; i++) { 
+
+                            var keyterms = results[i].keyterms.terms;
+
+                                if(typeof keyterms !== 'undefined') {
+
+                                          filter(keyterms);
+                                }
+  
+                        }
+
+                        out.records = []; 
+
+                        for(var i in filteredterms) {
+
+                                out.records.push(filteredterms[i]);
+                        }
+
+
+                        out.html = '<ul class="keywords"><li>' + out.records.join("</li><li>") + "</li></ul>";
+
+                        cb(out.html); 
+
+                     } else { cb('<ul class="keywords"><li>No keywords found. Try again.</li></ul>'); } 
+           } 
+
+
+           function filter(o) {
+
+                 for(var i=0; i<o.length; i++) { 
+
+                    if(o[i] !== query) {
+
+                      filteredterms[o[i]] = o[i];
+
+                    }//end-if
+
+                 }//end-for
+
+           }
+
+
+             
+               //@return public members
+               return {fix: fix,seed: seed,get: getTerms,seedTerms: seedTerms}
+
+        }();//do EXEC
+
+
+  </script>
+</body>
+</html>

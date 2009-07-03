@@ -1,0 +1,245 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Build your Own Search Service</title>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+  <link rel="stylesheet" href="http://yui.yahooapis.com/2.5.1/build/reset-fonts-grids/reset-fonts-grids.css" type="text/css">
+  <style>
+  html,body{background: #000;color: #ccc}
+
+  h1{
+      font-family: Futura,Helvetica,Arial,sans-serif;
+      font-size: 350%;
+      padding: .5em 0;
+      color: #393;
+  }
+
+  h2 {
+
+      font-family: Futura,Helvetica,Arial,sans-serif;
+      color: #fff;
+      font-size: 140%;
+      padding: .5em;
+      background: #030;
+       border-radius: 5px;
+       -moz-border-radius: 5px;
+       -webkit-border-radius: 5px; 
+        
+  }
+
+  a{color: #393}
+
+  #searchlink {
+
+      padding-bottom: .2em;
+  }
+
+  form {
+
+       margin: 1em 0;
+       padding: 1em;
+       color: #fff;
+       background: #393;
+       border: 5px solid #393; 
+       border-radius: 5px;
+       -moz-border-radius: 5px;
+       -webkit-border-radius: 5px; 
+
+  }
+
+      #webresults li, #images li,#news li{
+        padding:.5em 0;
+      }
+
+      img{
+        padding:.5em;
+        margin:10px auto;
+        display:block;
+      }
+
+      li p{
+        color:#666;
+        font-size:80%;
+      }
+
+      #images li{
+        position:relative;
+        overflow:auto;
+      }
+
+      #searchlink li a{
+        display:block;
+        padding-bottom:.2em;
+        font-size:115%;
+        color:#3c3;
+      }
+
+      ul{overflow:hidden;}
+
+      #ft{padding-top: 10px;margin-top: 10px;text-align:center}
+
+  </style>
+  <script type="text/javascript" src="http://yui.yahooapis.com/3.0.0pr1/build/yui/yui-min.js"></script>
+</head>
+<body>
+
+  <div id="doc2">
+
+         <div id="hd"><h1>BOSS - Build your Own Search Service</h1></div>
+
+          <div id="bd">
+
+                <div id="searchlink">
+
+                   <form id="searchform" action="http://search.yahahoo.com/search">
+
+                       <label for="s">Search for</label>
+                       <input type="text" id="s" name="s"><input type="submit" value="make it so">  
+
+                   </form>
+
+                </div>
+          </div>    
+
+         <div id="ft">Written by <a href="http://thinkphp.ro">Adrian Statescu</a> powered by BOSS and YUI<p>This is not an official Yahoo! site and not endorsed by the company</p></div>
+  </div> 
+
+
+
+
+<script type="text/javascript">
+
+        var donkeysearch = function() {
+
+               YUI({combine: true,timeout:10000}).use('node','get','dom','event',function(Y) { 
+
+                         donkeysearch.Y = Y;      
+
+                         var grid;                     
+
+                         var appID = '4muP0fTV34EwDebJKZAXcJ8rM.HrcyjGnNiihCuezlmEa_aNBJv.vcXaln98qow-';
+
+                         Y.get('#searchform').on('submit',function(e){
+
+                                var container = Y.get('#searchlink');
+
+                                var s = document.getElementById('s').value;
+
+                                       var APIurl = 'http://boss.yahooapis.com/ysearch/web/v1/'+s+'?format=json&callback=donkeysearch.seed&count=15&appid=' + appID;
+
+                                    if(typeof grid === 'undefined') {  
+
+                                           grid = Y.Node.create('<div class="yui-gb"></div>');
+                                        
+                                           grid.appendChild(Y.Node.create('<div id="webresults" class="yui-u first"><h2>Web search</h2><div>'));
+
+                                           grid.appendChild(Y.Node.create('<div id="images" class="yui-u"><h2>Images</h2><div>'));
+
+                                           grid.appendChild(Y.Node.create('<div id="news" class="yui-u"><h2>News</h2><div>'));
+
+                                           container.appendChild(grid);  
+                                    }
+                                                     
+            Y.Get.script(
+            [
+              APIurl,
+              APIurl.replace('web','images'),
+              APIurl.replace('web','news')
+            ], 
+            {
+              onSuccess:function(o){o.purge();},
+              onFailure:function(o){},
+              onTimeout:function(o){},
+              timeout:10000, 
+              context:Y, 
+              autopurge:true 
+            }
+          );
+
+                                    
+
+
+                                 e.preventDefault();
+                         });    
+               });  
+
+               return {
+
+                      seed: function(o) {
+
+                         if(typeof o.ysearchresponse.resultset_web !== 'undefined') {
+
+                                   var output = '<ul>';
+
+                                   var arr = o.ysearchresponse.resultset_web;
+
+                                   var end = o.ysearchresponse.resultset_web.length;
+
+                                       for(var i=0;i<end;i++) {
+
+                                               output +='<li><a href="' + arr[i].clickurl + '">'+ arr[i].title + '</a>' + arr[i].abstract + '</li>';  
+                                       } 
+
+                                       output +='</ul>';
+
+                                       donkeysearch.Y.get('#webresults').set('innerHTML','<h2>Web Search</h2>');
+                                   
+                                       donkeysearch.Y.get('#webresults').appendChild(donkeysearch.Y.Node.create(output));
+                             
+                         }
+
+                         if(typeof o.ysearchresponse.resultset_images !== 'undefined') {
+
+                                   var output = '<ul>';
+ 
+                                   var arr = o.ysearchresponse.resultset_images;   
+
+                                   var end = o.ysearchresponse.resultset_images.length;
+
+                                       for(var i=0;i<end;i++) {
+
+                                             output +='<li><a href="'+arr[i].clickurl+'">'+arr[i].title+'</a><a href="'+arr[i].clickurl+'"><img src="'+arr[i].thumbnail_url+'"></a><p>'+arr[i].refererurl.replace('http://www.','').substring(0,40)+'</li>';
+                                       } 
+
+                                      output +='</ul>';
+
+                                   donkeysearch.Y.get('#images').set('innerHTML','<h2>Images</h2>');
+
+                                   donkeysearch.Y.get('#images').appendChild(donkeysearch.Y.Node.create(output)); 
+
+ 
+                         }
+
+
+                         if(typeof o.ysearchresponse.resultset_news !== 'undefined') {
+
+                                   var output = '<ul>';
+
+                                   var arr = o.ysearchresponse.resultset_news;
+
+                                   var end = o.ysearchresponse.resultset_news.length;
+
+                                       for(var i=0;i<end;i++) {
+
+                                               output +='<li><a href="' + arr[i].clickurl + '">'+ arr[i].title + '</a>' + arr[i].source + '</li>';  
+                                       } 
+
+                                       output +='</ul>';
+
+                                       donkeysearch.Y.get('#news').set('innerHTML','<h2>News</h2>');
+                                   
+                                       donkeysearch.Y.get('#news').appendChild(donkeysearch.Y.Node.create(output));
+                             
+                         }
+
+                     
+
+                      }
+  
+                     }      
+
+        }();
+
+  </script>
+</body>
+</html>

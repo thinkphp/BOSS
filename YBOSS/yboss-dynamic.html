@@ -1,0 +1,195 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>YBOSS - Yahoo! Build your Own Search Service</title>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+  <link rel="stylesheet" href="http://yui.yahooapis.com/2.5.1/build/reset-fonts-grids/reset-fonts-grids.css" type="text/css">
+  <style>
+
+   html,body {background: #000;color: #ccc;}
+
+   h1 {
+
+      font-family: helvetica,arial,verdana,sans-serif;  
+      font-size: 300%;
+      color: #393;
+      margin: 20px
+   }
+
+   h2 {
+
+      font-family: helvetica,arial,verdana,sans-serif;  
+      font-size: 200%;
+      color: #fff;
+      background: #030;
+      margin-top: 20px;
+      margin-bottom: 20px;
+      padding: 10px;
+      -moz-border-radius: 10px;
+      -webkit-border-radius: 10px;
+      border-radius: 10px
+
+   }
+
+
+   form {
+
+      font-family: helvetica,arial,verdana,sans-serif;  
+      color: #fff;
+      background: #393;
+      text-align: left;
+      width: 100%;
+      padding: 20px;
+      font-size: 300%;
+      margin: 0px;      
+      -moz-border-radius: 10px;
+      -webkit-border-radius: 10px;
+      border-radius: 10px
+ 
+   }
+
+   form input {
+
+      border: 1px solid #ccc;
+      padding: 4px;
+      margin: 4px;
+      font-size: 25px;
+      text-align: center;
+      -moz-border-radius: 10px;
+      -webkit-border-radius: 10px;
+      border-radius: 10px
+   }    
+
+   form input:focus{background: #E3FFE5;text-align: center;padding: 4px;margin: 4px}
+
+   form label {color: #fff;font-size: 30px;}
+
+  ul{overflow:hidden;}
+
+  li p {
+        color: #ccc;
+        font-size: 110%;
+      }
+
+   img {
+        padding:.5em;
+        margin:10px auto;
+        display:block;
+      }
+
+  #images li{
+
+        position:relative;
+        overflow:auto;
+  }
+
+  a{color: #393;font-size: 120%}
+
+   #webresults li, #images li,#news li{
+
+        padding:.5em 0;
+   }
+
+  #ft{padding-top: 10px;margin-top: 10px;text-align:center;color: #BBFAB6}
+
+  #ft a{font-size: 110%;color: #81C131}
+  </style>
+</head>
+<body>
+
+  <div id="doc"> <!-- start doc -->
+ 
+  <div id="hd">
+
+              <h1>BOSS - Build your Own Search Service</h1>
+
+              <form action="http://search.yahoo.com/search?va=php">
+
+              <label for="s">Search for </label> <input type="text" name="s" id="s" autocomplete="off"/><input type="submit" id="solve" name="solve" value="make it so">
+
+              </form>
+  </div>
+
+     <div id="bd">
+          
+                   <div class="yui-gb">
+
+                            <div id="webresults" class="yui-u first"></div> 
+
+                            <div id="images" class="yui-u"></div> 
+
+                            <div id="news" class="yui-u"></div> 
+
+                   </div>  
+
+     </div>
+
+  <div id="ft">Written by <a href="http://thinkphp.ro">Adrian Statescu</a> Powered by BOSS and YUI<p>copyright &copy; 2008 Some rights reserved</p></div>
+
+  </div><!--end doc -->
+
+  <script type="text/javascript" src="yboss-lib.js"></script>
+
+  <script type="text/javascript">
+
+  (function() {  
+
+      document.getElementById('solve').onclick = function(e) {
+
+             function trim(str) {return str.replace(/^\s+/,'').replace(/\s+$/,'');}
+
+         var search = document.getElementById('s').value;
+
+             search = trim(search);
+
+             if(search == "") {return false;}
+
+             if(typeof search === 'string') {
+
+                           YBOSS.get({
+                                       query: search,
+ 
+                                       searches: 'web,images,news',
+
+                                       start: 1,
+
+                                       count: 10, 
+
+                                       callback: reveived
+                                    });
+             }//end if
+                             
+         return false;
+      }      
+
+                         function reveived(o) { 
+
+                                      if(typeof o.webHTML !== 'undefined') {
+
+                                                 document.getElementById('webresults').innerHTML = '<h2>Web Search</h2>' + o.webHTML; 
+                                      } else {
+
+                                                 document.getElementById('webresults').innerHTML = '<h2>Web Search</h2>'; 
+                                      }  
+                                    
+                                      if(typeof o.imagesHTML !== 'undefined') {
+              
+                                                 document.getElementById('images').innerHTML = '<h2>Images</h2>' + o.imagesHTML;
+                                      } else {
+
+                                                 document.getElementById('images').innerHTML = '<h2>Images</h2>';
+                                      }
+
+                                      if(typeof o.newsHTML !== 'undefined') {
+
+                                                 document.getElementById('news').innerHTML = '<h2>News</h2>' + o.newsHTML;
+                                      } else {
+
+                                                 document.getElementById('news').innerHTML = '<h2>News</h2>';
+                                      }
+                          }
+    })();
+
+  </script>
+</body>
+</html>

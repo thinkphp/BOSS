@@ -1,0 +1,60 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>BOSS - Build your Own Search Service</title>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+  <style>
+  html,body {
+      
+     font-family: helvetica,verdana,arial,sans-serif;
+     color: #ccc;
+     background: #000;
+  }
+
+  h1{
+     color: #fff;
+     background: #393;
+     font-family: helvetica;
+     font-size: 300%;
+     -moz-border-radius: 10px; 
+     -webkit-border-radius: 10px;
+     border-radius: 10px;
+       
+  }
+
+  a{color: #393}
+  </style>
+</head>
+<body>
+<center><h1>BOSS - Build your Own Search Service</h1></center>
+<div id="results"></div>
+
+<script type="text/javascript" src="yboss-lib.js"></script>
+<script type="text/javascript">
+
+ YBOSS.get({
+
+            searches: 'web,news,images',
+
+            query: 'PHP',
+
+            count: 5,
+
+            start: 0,              
+
+            callback: received        
+ });
+
+
+ function received(o) {
+
+            document.getElementById('results').innerHTML = '<h2>Web</h2>' + o.webHTML;
+
+            document.getElementById('results').innerHTML += '<h2>Images</h2>' + o.imagesHTML;
+
+            document.getElementById('results').innerHTML += '<h2>News</h2>' + o.newsHTML;
+ }
+
+</script>
+</body>
+</html>

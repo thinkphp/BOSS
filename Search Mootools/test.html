@@ -1,0 +1,200 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Template</title>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+  <style>
+    
+   #results ul li {display: inline}
+
+   #results.js ul{display: none}
+
+   #results.js ul.show{display: inline;background: #eee}
+
+  </style>
+</head>
+<body>
+
+
+       <ul id="results" class="js">
+          <li>asdasdasdassad
+             <p class="kw">Keywords</p>
+         <ul>
+         <li>tag1</li>
+         <li>tag2</li>
+         <li>tag3</li>
+         <li>tag4</li>
+         <li>tag5</li>
+         <li>tag6</li>
+         <li>tag7</li>
+         </ul>
+
+          </li>
+          <li>asdasdasdassad
+
+             <p class="kw">Keywords</p>
+         <ul>
+         <li>tag1</li>
+         <li>tag2</li>
+         <li>tag3</li>
+         <li>tag4</li>
+         <li>tag5</li>
+         <li>tag6</li>
+         <li>tag7</li>
+         </ul>
+
+          </li>
+          <li>asdasdasdassad
+
+             <p class="kw">Keywords</p>
+         <ul>
+         <li>tag1</li>
+         <li>tag2</li>
+         <li>tag3</li>
+         <li>tag4</li>
+         <li>tag5</li>
+         <li>tag6</li>
+         <li>tag7</li>
+         </ul>
+
+
+          </li> 
+          <li>asdasdasdassad
+             <p class="kw">Keywords</p>
+         <ul>
+         <li>tag1</li>
+         <li>tag2</li>
+         <li>tag3</li>
+         <li>tag4</li>
+         <li>tag5</li>
+         <li>tag6</li>
+         <li>tag7</li>
+         </ul>
+
+            </li>
+       </ul>
+
+  <script type="text/javascript">
+
+       DOMhelp = {
+
+              addEvent: function(elem,evType,fn,useCapture) {
+
+                        if(elem.addEventListener) {
+
+                               elem.addEventListener(evType,fn,useCapture);
+
+                        } else if(elem.attachEvent) {
+
+                               var r = elem.attachEvent('on'+evType,fn);
+ 
+                               return r;
+
+                        } else {
+
+                                elem['on'+evType] = fn;
+                        }
+              },
+
+              addClass: function(elem,c) {
+
+                        if(!DOMhelp.hasClass(elem,c)) {
+                               
+                                    elem.className += ' ' + c;
+                        }
+              },
+
+              removeClass: function(elem,c) {
+
+                     var pattern = new RegExp('(\\\\s|^)' + c + '(\\\\s|$)'); 
+ 
+                        if(DOMhelp.hasClass(elem,c)) {
+
+                                    elem.className = elem.className.replace(pattern,' '); 
+                        }
+              },
+ 
+              hasClass: function(elem,c) {
+
+                     var pattern = new RegExp('(\\\\s|^)' + c + '(\\\\s|$)'); 
+
+                         return elem.className.match(pattern);  
+                         
+              },
+
+
+              trim: function(str) {return str.replace(/^\s+/,'').replace('/\s+$/','');},
+
+              $: function(id) {return document.getElementById(id);},
+
+              $$: function(searchClass,node,tag) {
+
+                     var arr = [];
+
+                     var pattern = new RegExp('(\\\\s|^)'+searchClass+'(\\\\\s|$)'); 
+
+                     if(node == null) {node = document;}
+
+                     if(tag == null) {tag = "*";}
+
+                     var elems = node.getElementsByTagName(tag);
+
+                         for(var i=0,j=0;i<elems.length;i++) {
+
+                                  if(elems[i].className.match(pattern)) {
+
+                                       arr[j++] = elems[i];
+                                  }
+                         };//endfor 
+
+                   return arr;                   
+              }
+       };
+
+
+        var all = DOMhelp.$$('kw',DOMhelp.$('results'),'p');
+ 
+                  for(var i=0;i<all.length;i++) {
+
+                         all[i].innerHTML = '<a href="#">Keywords</a>';
+                  }        
+ 
+    
+  if(DOMhelp.$('results')) { 
+
+       DOMhelp.addEvent(DOMhelp.$('results'),'click',function(e){
+
+                      var target = e.target;
+
+                      if(target.nodeName.toLowerCase() == 'a') {
+
+                            var next = target.parentNode.nextSibling.nextSibling;
+
+                                if(DOMhelp.hasClass(target.parentNode,'kw')) {
+
+                                  if(DOMhelp.hasClass(next,'show')) {
+
+                                             DOMhelp.removeClass(next,'show'); 
+
+                                             target.href = 'show keywords';
+
+                                  } else { 
+
+                                             DOMhelp.addClass(next,'show'); 
+
+                                             target.href = 'hide keywords';
+                                  }
+
+                                }//endif
+                      } 
+
+             e.preventDefault();
+                 
+       },false);
+
+  }//end if
+
+  </script>
+
+</body>
+</html>

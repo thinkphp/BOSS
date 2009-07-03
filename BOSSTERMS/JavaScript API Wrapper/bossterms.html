@@ -1,0 +1,132 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Find keywords connected to a certain term with Yahoo BOSS</title>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+  <link rel="stylesheet" href="http://yui.yahooapis.com/2.5.1/build/reset-fonts-grids/reset-fonts-grids.css" type="text/css">
+  <style>
+  html,body {background: #000;color: #ccc;}
+ 
+  h1 {
+
+     font-family: Futura,verdana,arial,sans-serif;
+     font-size: 200%;
+     color: #fff;
+     background: #030;
+     padding: 15px;
+     margin-top: 10px;
+     -moz-border-radius: 10px;
+     -webkit-border-radius: 10px;
+     border-radius: 10px 
+     text-align: center;
+  }
+
+  h2 {
+
+     margin-top: 14px; 
+     font-family: futura,Verdana,Arial,sans-serif,helvetica;
+     text-align: left;
+     font-size: 22px;
+     color: #393;
+     margin-bottom: 14px  
+  }
+  
+  #output {text-align: left;padding-top: 10px;padding-bottom: 30px}
+
+  #output ul li {display: inline;padding-right: 17px;padding-top: 10px;font-size: 123%;font-family: arial;}
+
+  p{margin: .4em 0;font-size: 15px}
+
+  #ft {text-align: center;color: #ccc;margin-top: 20px}
+
+  #ft a {color: #595}
+
+  #ft p {font-size: 12px}
+  </style>
+</head>
+<body>
+
+<div id="doc">
+
+<div id="hd"><h1>Find keywords connected to a certain term with Yahoo! BOSS</h1></div>
+
+<div id="bd">
+
+<h2>Retrieving keywords with JavaScript</h2>
+
+<p id="retrieving">
+
+Retrieving a bunch of keywords using JavaScript is pretty easy. All you need to do is to include the bossterms.js script
+and call BOSSTERMS.get() method.
+
+<p>The method takes two parameters: the mandatory term to search for and the name of the callback method. If there`s no method it`ll just user alert().</p>
+
+<p>The callback method retrieves a JSON object with three properties:</p>
+
+<pre>
+   term 
+
+       The term you searched for    
+
+   keywords
+
+       The keywords returned as an array
+
+   html 
+
+       An HTML list with the terms as list items 
+</pre>     
+
+</p>
+
+<h2>Keywords for '<span id="s">php</span>'</h2>
+
+            <div id="output"></div>
+
+
+            <h2>Source</h2>
+
+            <p>
+<pre><code>
+&lt;div id="terms"&gt;&lt;/div&gt;
+&lt;script type="text/javascript" src="bossterms.js"&gt;&lt;/script&gt;
+&lt;script type="text/javascript"&gt;
+function seed(o){
+var out = '&lt;h3&gt;Keywords for "php"&lt;/h3&gt;' + o.html;
+document.getElementById('terms').innerHTML = out;
+}
+BOSSTERMS.get('php',seed);
+&lt;/script&gt;
+</code></pre>
+</p>
+<p>By default, the JavaScript uses my own application ID. Please get your own and override it with your own one using the following code:</p>
+
+<p>BOSSTERMS.config.appID = your_app_id</p>
+
+</div>
+
+<div id="ft">Written By <a href="http://thinkphp.ro">Adrian Statescu</a>. Powered by BOSS<p class="ft">copyright &copy; 2008 Some rights reserved</p</div>
+
+</div>
+
+<script type="text/javascript" src="bossterms.js"></script>
+
+<script type="text/javascript">
+
+   (function(){
+
+        var search = 'application';
+
+            document.getElementById('s').innerHTML = search;
+ 
+            BOSSTERMS.get(search,received);
+ 
+               function received(o) {
+
+                      document.getElementById('output').innerHTML = o.html;
+               }
+  })();
+
+</script>
+</body>
+</html>

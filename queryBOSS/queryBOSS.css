@@ -1,0 +1,29 @@
+html,body{background:#333;color:#ccc;font-family:"Arial Rounded MT Bold",Calibri,Futura,Sans-serif;}
+
+#doc2{ background:#fff; border:1em solid #fff;}
+
+#form,#nav{ background: #3F4B89; border-radius:5px; -moz-border-radius:5px; -webkit-border-radius:5px;color:#fff; font-size:120%;overflow:hidden; margin:1em 0;color:#fff;padding:1em;}
+
+#nav a{ text-decoration:none; color:#fff; }
+
+input{ margin:0 .5em; }
+
+h2 { font-size:130%; padding:1em 0 .5em 0;}
+
+h1 {font-size: 250%; margin:.5em 0; color:#036; font-family:"futura","Gill Sans",Arial,sans-serif; text-align:center; font-weight: bold}
+ 
+#ft{ margin-top:2em; color:#666; font-size:70%; font-family: tahoma}
+
+#ft a { color:#000;}
+
+#results span {color: #393; font-family: tohama;font-size: 12px}
+
+table td{text-align: left;padding: 15px}
+
+#resultcounter {font-family: tahoma;background: #DCDCDC;color: #222;padding: 5px;text-align: right;border-top: 2px solid #ccc}
+
+#nav li.right {float: right}
+
+#nav li.left {float: left}
+
+a{text-decoration: none;color: #3F4B89}
